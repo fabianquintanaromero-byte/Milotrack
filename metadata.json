@@ -1,0 +1,6 @@
+{
+  "name": "CanisTrack GPS",
+  "description": "Sistema avanzado de rastreo GPS y navegación satelital en tiempo real con modo oscuro, vista satélite, geocercas interactivas, telemetría y marcador dinámico de perrito castaño.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
