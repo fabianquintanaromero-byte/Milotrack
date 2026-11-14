@@ -1,0 +1,35 @@
+name: MiloTrack iOS
+on:
+  workflow_dispatch:
+  push:
+    branches: [milotrack-ios]
+    paths: ['ios/**', '.github/workflows/milotrack-ios.yml']
+permissions:
+  contents: read
+jobs:
+  compile:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate Xcode project
+        run: |
+          brew install xcodegen
+          xcodegen generate --spec ios/project.yml
+      - name: Compile for iPhone Simulator
+        run: |
+          xcodebuild -project ios/MiloTrack.xcodeproj -scheme MiloTrack \
+            -configuration Release -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath ios/build CODE_SIGNING_ALLOWED=NO build
+      - name: Package simulator build
+        run: ditto -c -k --keepParent ios/build/Build/Products/Release-iphonesimulator/MiloTrack.app MiloTrack-iOS-Simulator.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MiloTrack-iOS-Simulator
+          path: MiloTrack-iOS-Simulator.zip
+          if-no-files-found: error
+      - name: Compile for iPhone
+        run: |
+          xcodebuild -project ios/MiloTrack.xcodeproj -scheme MiloTrack \
+            -configuration Release -destination 'generic/platform=iOS' \
+            -derivedDataPath ios/build CODE_SIGNING_ALLOWED=NO build
